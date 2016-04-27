@@ -1,3 +1,5 @@
+require './myjson'
+
 describe MyJSON do
   it 'creates an instance' do
     expect(MyJSON.new('')).to be_a_kind_of MyJSON
@@ -54,9 +56,9 @@ describe MyJSON do
       expect(array.size).to eq 4
     end
 
-    it 'returns nil if it is not an array' do
-      not_an_array = MyJSON.new('{"a":1, "b":2}').to_a
-      expect(not_an_array).to be nil
+    it 'returns [] if it is not an array' do
+      not_an_array = MyJSON.new('true').to_a
+      expect(not_an_array).to eq []
     end
   end
 
@@ -67,10 +69,6 @@ describe MyJSON do
 
     it 'returns a string' do
       expect(MyJSON.new('"string"').get_value).to be_a_kind_of String
-    end
-
-    it 'returns an array' do
-      expect(MyJSON.new('[]').get_value).to be_a_kind_of Array
     end
 
     it 'returns true' do
@@ -85,7 +83,11 @@ describe MyJSON do
       expect(MyJSON.new('null').get_value).to be nil
     end
 
-    it 'returns a MyJSON instance' do
+    it 'returns a MyJSON instance for an array' do
+      expect(MyJSON.new('[]').get_value).to be_a_kind_of MyJSON
+    end
+
+    it 'returns a MyJSON instance for a hash' do
       expect(MyJSON.new('{}').get_value).to be_a_kind_of MyJSON
     end
   end

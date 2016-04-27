@@ -1,6 +1,8 @@
 require 'oj'
 
 class MyJSON
+  include Enumerable
+
   # json: JSON String
   # position: starting element in the json string (eg '/3/user/login')
   def initialize(json, position=nil)
@@ -17,6 +19,17 @@ class MyJSON
     end
   end
 
+  def each
+    Oj::Doc.open(@json) do |doc|
+      doc.move(@position) if @position
+      if doc.type == Array
+        doc.each_child { |child| yield(self[child.where?]) }
+      elsif doc.type == Hash
+        doc.each_child { |child| yield(child.local_key, self[child.where?]) }
+      end
+    end
+  end
+
   def method_missing(name = nil)
     Oj::Doc.open(@json) do |doc|
       begin
@@ -24,11 +37,7 @@ class MyJSON
         doc.move(@position) if @position
         doc.move(name.to_s) if name
 
-        if doc.type == Array
-          array = []
-          doc.each_child { |doc| array << self[doc.where?] }
-          array
-        elsif doc.type == Hash
+        if [Array, Hash].include? doc.type
           self.class.new(@json, doc.where?)
         else
           doc.fetch
@@ -41,13 +50,6 @@ class MyJSON
 
   def key?(key)
     ! self[key].nil?
-  end
-
-  # returns an array of values in case the current value is an array
-  # returns nil otherwise
-  def to_a
-     value = self[]
-     value.kind_of?(Array) ? value : nil
   end
 
   alias_method :[], :method_missing
