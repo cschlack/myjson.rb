@@ -12,35 +12,31 @@ class MyJSON
 
   # dumps the original json string
   def dump
-    if @position
-      Oj::Doc.open(@json) { |doc| doc.dump(@position) }
-    else
-      @json
+    with_json do |node|
+      @position ? node.dump(@position) : @json
     end
   end
 
   def each
-    Oj::Doc.open(@json) do |doc|
-      doc.move(@position) if @position
-      if doc.type == Array
-        doc.each_child { |child| yield(self[child.where?]) }
-      elsif doc.type == Hash
-        doc.each_child { |child| yield(child.local_key, self[child.where?]) }
+    with_json do |node|
+      if node.type == Array
+        node.each_child { |child| yield(self[child.where?]) }
+      elsif node.type == Hash
+        node.each_child { |child| yield(child.local_key, self[child.where?]) }
       end
     end
   end
 
   def method_missing(name = nil)
-    Oj::Doc.open(@json) do |doc|
+    with_json do |node|
       begin
         # move to the starting JSON element
-        doc.move(@position) if @position
-        doc.move(name.to_s) if name
+        node.move(name.to_s) if name
 
-        if [Array, Hash].include? doc.type
-          self.class.new(@json, doc.where?)
+        if [Array, Hash].include? node.type
+          self.class.new(@json, node.where?)
         else
-          doc.fetch
+          node.fetch
         end
       rescue ArgumentError
         nil
@@ -53,4 +49,13 @@ class MyJSON
   end
 
   alias_method :[], :method_missing
+
+  private
+
+  def with_json
+    Oj::Doc.open(@json) do |doc|
+      doc.move(@position) if @position
+      yield(doc)
+    end
+  end
 end
