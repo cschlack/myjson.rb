@@ -2,12 +2,12 @@ require './myjson'
 
 describe MyJSON do
   it 'creates an instance' do
-    expect(MyJSON.new('')).to be_a_kind_of MyJSON
+    expect(MyJSON.new('')).to be_an_instance_of MyJSON
   end
 
   it 'parses a JSON string' do
     json = MyJSON.new('[{"a":1, "b":2}]')
-    expect(json).to be_a_kind_of MyJSON
+    expect(json).to be_an_instance_of MyJSON
   end
 
   it 'accesses properties by name' do
@@ -52,7 +52,7 @@ describe MyJSON do
   describe '.to_a' do
     it 'returns an array' do
       array = MyJSON.new('[1, 2, 3, 4]').to_a
-      expect(array).to be_a_kind_of Array
+      expect(array).to be_an_instance_of Array
       expect(array.size).to eq 4
     end
 
@@ -64,31 +64,31 @@ describe MyJSON do
 
   describe '.get_value' do
     it 'returns a number' do
-      expect(MyJSON.new('1').get_value).to be_a_kind_of Fixnum
+      expect(MyJSON.new('[1]').first).to be_an_instance_of Fixnum
     end
 
     it 'returns a string' do
-      expect(MyJSON.new('"string"').get_value).to be_a_kind_of String
+      expect(MyJSON.new('["string"]').first).to be_an_instance_of String
     end
 
     it 'returns true' do
-      expect(MyJSON.new('true').get_value).to be true
+      expect(MyJSON.new('[true]').first).to be true
     end
 
     it 'returns false' do
-      expect(MyJSON.new('false').get_value).to be false
+      expect(MyJSON.new('[false]').first).to be false
     end
 
     it 'returns nil' do
-      expect(MyJSON.new('null').get_value).to be nil
+      expect(MyJSON.new('[null]').first).to be nil
     end
 
     it 'returns a MyJSON instance for an array' do
-      expect(MyJSON.new('[]').get_value).to be_a_kind_of MyJSON
+      expect(MyJSON.new('[[]]').first).to be_an_instance_of MyJSON
     end
 
     it 'returns a MyJSON instance for a hash' do
-      expect(MyJSON.new('{}').get_value).to be_a_kind_of MyJSON
+      expect(MyJSON.new('[{}]').first).to be_an_instance_of MyJSON
     end
   end
 end

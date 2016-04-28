@@ -53,5 +53,4 @@ class MyJSON
   end
 
   alias_method :[], :method_missing
-  alias_method :get_value, :method_missing
 end
