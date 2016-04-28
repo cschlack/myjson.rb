@@ -62,6 +62,16 @@ describe MyJSON do
     end
   end
 
+  describe '.fetch' do
+    it 'returns an array' do
+      expect(MyJSON.new('[]').fetch).to be_an_instance_of Array
+    end
+
+    it 'returns a hash' do
+      expect(MyJSON.new('{}').fetch).to be_an_instance_of Hash
+    end
+  end
+
   describe '.get_value' do
     it 'returns a number' do
       expect(MyJSON.new('[1]').first).to be_an_instance_of Fixnum

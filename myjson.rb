@@ -27,6 +27,10 @@ class MyJSON
     end
   end
 
+  def fetch
+    with_json { |node| node.fetch }
+  end
+
   def method_missing(name = nil)
     with_json do |node|
       begin
